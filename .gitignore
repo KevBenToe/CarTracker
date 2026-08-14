@@ -1,0 +1,50 @@
+# Python / Django
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+.env
+.venv/
+venv/
+env/
+*.sqlite3
+*.db
+media/
+staticfiles/
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+
+# Flutter / Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+build/
+frontend/.dart_tool/
+frontend/build/
+*.iml
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Docker
+.docker/
+
+# Environment files
+*.env
+.env.*
+!.env.example
+
+# Node (if any tooling)
+node_modules/
