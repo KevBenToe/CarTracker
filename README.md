@@ -27,6 +27,8 @@ A modern, full-stack web application for managing vehicles, maintenance records,
 The frontend is deployed on GitHub Pages and automatically detects whether the backend is reachable.
 When running in demo mode, all data is stored in browser local storage.
 
+🔗 **Live Demo:** [https://kevbentoe.github.io/CarTracker/](https://kevbentoe.github.io/CarTracker/)
+
 ## Quick Start
 
 ### Backend (Development)
