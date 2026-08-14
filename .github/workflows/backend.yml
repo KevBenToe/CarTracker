@@ -51,8 +51,8 @@ jobs:
       - name: Run tests
         working-directory: backend
         env:
-          DJANGO_SETTINGS_MODULE: config.settings.development
-          SECRET_KEY: test-secret-key-for-ci
+          DJANGO_SETTINGS_MODULE: config.settings.ci
+          SECRET_KEY: test-secret-key-for-ci-only-not-production
           DATABASE_URL: ******localhost:5432/cartracker_test
           DEBUG: True
         run: |
@@ -62,7 +62,8 @@ jobs:
       - name: Check migrations are up to date
         working-directory: backend
         env:
-          DJANGO_SETTINGS_MODULE: config.settings.development
-          SECRET_KEY: test-secret-key-for-ci
+          DJANGO_SETTINGS_MODULE: config.settings.ci
+          SECRET_KEY: test-secret-key-for-ci-only-not-production
+          DATABASE_URL: ******localhost:5432/cartracker_test
           DEBUG: True
         run: python manage.py migrate --check

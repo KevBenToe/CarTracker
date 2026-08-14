@@ -40,8 +40,11 @@ class Vehicle(models.Model):
         choices=FuelType.choices,
         default=FuelType.GASOLINE,
     )
+    nickname = models.CharField(max_length=100, blank=True)
     notes = models.TextField(blank=True)
     image = models.ImageField(upload_to="vehicles/images/", blank=True, null=True)
+    last_service_date = models.DateField(blank=True, null=True)
+    next_service_date = models.DateField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     owner = models.ForeignKey(

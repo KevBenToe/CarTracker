@@ -7,16 +7,40 @@ import 'package:vehicle_service_manager_frontend/providers/maintenance_provider.
 import 'package:vehicle_service_manager_frontend/providers/vehicle_provider.dart';
 import 'package:vehicle_service_manager_frontend/repositories/reminder_repository.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  late Future<List<Reminder>> _remindersFuture;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _remindersFuture = context.read<ReminderRepository>().getReminders();
+  }
+
+  Future<void> _refresh() async {
+    final VehicleProvider vehicleProvider = context.read<VehicleProvider>();
+    final MaintenanceProvider maintenanceProvider =
+        context.read<MaintenanceProvider>();
+    setState(() {
+      _remindersFuture = context.read<ReminderRepository>().getReminders();
+    });
+    await Future.wait<void>(<Future<void>>[
+      vehicleProvider.loadVehicles(),
+      maintenanceProvider.loadRecords(),
+    ]);
+  }
 
   @override
   Widget build(BuildContext context) {
     final VehicleProvider vehicleProvider = context.watch<VehicleProvider>();
     final MaintenanceProvider maintenanceProvider =
         context.watch<MaintenanceProvider>();
-    final ReminderRepository reminderRepository =
-        context.watch<ReminderRepository>();
 
     final NumberFormat currency = NumberFormat.simpleCurrency();
     final List<Widget> content = <Widget>[
@@ -97,49 +121,45 @@ class HomeScreen extends StatelessWidget {
               ),
       ),
       const SizedBox(height: 16),
-      FutureBuilder<List<Reminder>>(
-        future: reminderRepository.getReminders(),
-        builder: (
-          BuildContext context,
-          AsyncSnapshot<List<Reminder>> snapshot,
-        ) {
-          final List<Reminder> reminders = snapshot.data ?? <Reminder>[];
-          return _SectionCard(
-            title: 'Upcoming reminders',
-            child: snapshot.connectionState == ConnectionState.waiting
-                ? const Center(child: CircularProgressIndicator())
-                : Column(
-                    children: reminders.take(4).map((Reminder reminder) {
-                      final String vehicleName =
-                          vehicleProvider.findById(reminder.vehicleId)?.displayName ??
-                              'Unknown vehicle';
-                      return ListTile(
-                        contentPadding: EdgeInsets.zero,
-                        leading: Icon(
-                          reminder.isCompleted
-                              ? Icons.check_circle_outline
-                              : Icons.notification_important_outlined,
-                        ),
-                        title: Text(reminder.title),
-                        subtitle: Text(vehicleName),
-                        trailing: Text(
-                          DateFormat.yMMMd().format(reminder.dueDate),
-                        ),
-                      );
-                    }).toList(),
+      _SectionCard(
+        title: 'Upcoming reminders',
+        child: FutureBuilder<List<Reminder>>(
+          future: _remindersFuture,
+          builder: (
+            BuildContext context,
+            AsyncSnapshot<List<Reminder>> snapshot,
+          ) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            final List<Reminder> reminders = snapshot.data ?? <Reminder>[];
+            return Column(
+              children: reminders.take(4).map((Reminder reminder) {
+                final String vehicleName =
+                    vehicleProvider.findById(reminder.vehicleId)?.displayName ??
+                        'Unknown vehicle';
+                return ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: Icon(
+                    reminder.isCompleted
+                        ? Icons.check_circle_outline
+                        : Icons.notification_important_outlined,
                   ),
-          );
-        },
+                  title: Text(reminder.title),
+                  subtitle: Text(vehicleName),
+                  trailing: Text(
+                    DateFormat.yMMMd().format(reminder.dueDate),
+                  ),
+                );
+              }).toList(),
+            );
+          },
+        ),
       ),
     ];
 
     return RefreshIndicator(
-      onRefresh: () async {
-        await Future.wait<void>(<Future<void>>[
-          vehicleProvider.loadVehicles(),
-          maintenanceProvider.loadRecords(),
-        ]);
-      },
+      onRefresh: _refresh,
       child: ListView(
         padding: const EdgeInsets.all(20),
         children: content,
