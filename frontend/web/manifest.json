@@ -1,0 +1,13 @@
+{
+  "name": "Vehicle Service Manager",
+  "short_name": "Service Manager",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#F6F8FB",
+  "theme_color": "#1D3557",
+  "description": "Track vehicles, maintenance, documents and reminders.",
+  "orientation": "portrait-primary",
+  "prefer_related_applications": false,
+  "icons": []
+}
+
