@@ -54,7 +54,7 @@ void main() {
 
     await tester.pumpAndSettle();
 
-    expect(find.text('Dashboard'), findsWidgets);
+    expect(find.text('Dashboard'), findsAtLeastNWidgets(1));
     expect(find.text('Vehicles'), findsWidgets);
   });
 }
