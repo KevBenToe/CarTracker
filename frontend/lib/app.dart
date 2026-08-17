@@ -56,9 +56,6 @@ class ResponsiveAppShell extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        foregroundColor: Colors.white,
-        title: Text(title),
         flexibleSpace: const DecoratedBox(
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -70,32 +67,10 @@ class ResponsiveAppShell extends StatelessWidget {
               end: Alignment.centerRight,
             ),
           ),
-          child: SafeArea(
-            bottom: false,
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Padding(
-                padding: EdgeInsets.only(left: 16),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Icon(Icons.directions_car, color: Colors.white, size: 22),
-                    SizedBox(width: 8),
-                    Text(
-                      'Autohaus Rabus',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
         ),
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.white,
+        title: Text(title),
         actions: <Widget>[
           if (appState.isCheckingConnectivity)
             const Padding(
