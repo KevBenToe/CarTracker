@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -55,8 +54,8 @@ void main() {
 
     await tester.pumpAndSettle();
 
-    expect(find.text('Dashboard'), findsOneWidget);
-    expect(find.text('Vehicles'), findsWidgets);
+    expect(find.text('Dashboard'), findsNWidgets(2));
+    expect(find.text('Add vehicle'), findsOneWidget);
   });
 }
 

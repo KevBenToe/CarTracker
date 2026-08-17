@@ -26,6 +26,7 @@ A modern, full-stack web application for managing vehicles, maintenance records,
 
 The frontend is deployed on GitHub Pages and automatically detects whether the backend is reachable.
 When running in demo mode, all data is stored in browser local storage.
+For the deployment workflow in `.github/workflows/frontend.yml` to publish the Flutter build, the repository Pages source must be set to **GitHub Actions** in **Settings → Pages**.
 
 🔗 **Live Demo:** [https://kevbentoe.github.io/CarTracker/](https://kevbentoe.github.io/CarTracker/)
 
