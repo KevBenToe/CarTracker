@@ -376,7 +376,7 @@ class _ImagePickerSection extends StatelessWidget {
         const SizedBox(width: 16),
         OutlinedButton.icon(
           onPressed: onPickImage,
-          icon: const Icon(Icons.photo_camera_outlined),
+          icon: const Icon(Icons.photo_library_outlined),
           label: Text(
             hasNewImage || hasExisting ? 'Bild ändern' : 'Bild auswählen',
           ),
