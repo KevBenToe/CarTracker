@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:vehicle_service_manager_frontend/core/status_labels.dart';
 import 'package:vehicle_service_manager_frontend/models/maintenance_record.dart';
 import 'package:vehicle_service_manager_frontend/providers/maintenance_provider.dart';
 import 'package:vehicle_service_manager_frontend/providers/vehicle_provider.dart';
@@ -23,14 +24,14 @@ class MaintenanceScreen extends StatelessWidget {
             children: <Widget>[
               Expanded(
                 child: Text(
-                  'Maintenance',
+                  'Wartung',
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
               ),
               FilledButton.icon(
                 onPressed: () => context.go('/maintenance/new'),
                 icon: const Icon(Icons.add),
-                label: const Text('Add Record'),
+                label: const Text('Eintrag hinzufügen'),
               ),
             ],
           ),
@@ -44,14 +45,14 @@ class MaintenanceScreen extends StatelessWidget {
             const Card(
               child: Padding(
                 padding: EdgeInsets.all(20),
-                child: Text('No maintenance records yet.'),
+                child: Text('Noch keine Wartungseinträge vorhanden.'),
               ),
             )
           else
             ...provider.records.map((MaintenanceRecord record) {
               final String vehicleName =
                   vehicleProvider.findById(record.vehicleId)?.displayName ??
-                      'Unknown vehicle';
+                      'Unbekanntes Fahrzeug';
               return Padding(
                 padding: const EdgeInsets.only(bottom: 16),
                 child: Card(
@@ -75,10 +76,10 @@ class MaintenanceScreen extends StatelessWidget {
                       crossAxisAlignment: WrapCrossAlignment.center,
                       spacing: 8,
                       children: <Widget>[
-                        Chip(label: Text(record.status)),
+                        Chip(label: Text(maintenanceStatusLabel(record.status))),
                         Text(DateFormat.yMMMd().format(record.date)),
                         IconButton(
-                          tooltip: 'Edit record',
+                          tooltip: 'Eintrag bearbeiten',
                           onPressed: () => context.go('/maintenance/${record.id}/edit'),
                           icon: const Icon(Icons.edit_outlined),
                         ),
@@ -93,4 +94,3 @@ class MaintenanceScreen extends StatelessWidget {
     );
   }
 }
-

@@ -49,23 +49,23 @@ class _HomeScreenState extends State<HomeScreen> {
         runSpacing: 16,
         children: <Widget>[
           _MetricCard(
-            title: 'Vehicles',
+            title: 'Fahrzeuge',
             value: '${vehicleProvider.vehicles.length}',
             icon: Icons.directions_car_filled_outlined,
           ),
           _MetricCard(
-            title: 'Maintenance Records',
+            title: 'Wartungseinträge',
             value: '${maintenanceProvider.records.length}',
             icon: Icons.build_circle_outlined,
           ),
           _MetricCard(
-            title: 'Scheduled Services',
+            title: 'Geplante Services',
             value:
                 '${maintenanceProvider.records.where((record) => record.status != 'Completed').length}',
             icon: Icons.event_available_outlined,
           ),
           _MetricCard(
-            title: 'Service Spend',
+            title: 'Servicekosten',
             value: currency.format(
               maintenanceProvider.records.fold<double>(
                 0,
@@ -84,30 +84,30 @@ class _HomeScreenState extends State<HomeScreen> {
           FilledButton.icon(
             onPressed: () => context.go('/vehicles/new'),
             icon: const Icon(Icons.add),
-            label: const Text('Add vehicle'),
+            label: const Text('Fahrzeug hinzufügen'),
           ),
           FilledButton.tonalIcon(
             onPressed: () => context.go('/maintenance/new'),
             icon: const Icon(Icons.playlist_add_check_circle_outlined),
-            label: const Text('Log maintenance'),
+            label: const Text('Wartung erfassen'),
           ),
           OutlinedButton.icon(
             onPressed: () => context.go('/documents'),
             icon: const Icon(Icons.folder_copy_outlined),
-            label: const Text('View documents'),
+            label: const Text('Dokumente anzeigen'),
           ),
         ],
       ),
       const SizedBox(height: 24),
       _SectionCard(
-        title: 'Recent maintenance',
+        title: 'Letzte Wartungen',
         child: maintenanceProvider.isLoading
             ? const Center(child: CircularProgressIndicator())
             : Column(
                 children: maintenanceProvider.records.take(4).map((record) {
                   final String vehicleName =
                       vehicleProvider.findById(record.vehicleId)?.displayName ??
-                          'Unknown vehicle';
+                          'Unbekanntes Fahrzeug';
                   return ListTile(
                     contentPadding: EdgeInsets.zero,
                     leading: const CircleAvatar(
@@ -122,7 +122,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       const SizedBox(height: 16),
       _SectionCard(
-        title: 'Upcoming reminders',
+        title: 'Anstehende Erinnerungen',
         child: FutureBuilder<List<Reminder>>(
           future: _remindersFuture,
           builder: (
@@ -137,7 +137,7 @@ class _HomeScreenState extends State<HomeScreen> {
               children: reminders.take(4).map((Reminder reminder) {
                 final String vehicleName =
                     vehicleProvider.findById(reminder.vehicleId)?.displayName ??
-                        'Unknown vehicle';
+                        'Unbekanntes Fahrzeug';
                 return ListTile(
                   contentPadding: EdgeInsets.zero,
                   leading: Icon(
@@ -231,4 +231,3 @@ class _SectionCard extends StatelessWidget {
     );
   }
 }
-

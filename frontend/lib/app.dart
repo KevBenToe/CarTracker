@@ -25,7 +25,7 @@ class VehicleServiceManagerApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final ThemeProvider themeProvider = context.watch<ThemeProvider>();
     return MaterialApp.router(
-      title: 'Vehicle Service Manager',
+      title: 'Fahrzeug-Service-Manager',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme(),
       darkTheme: AppTheme.darkTheme(),
@@ -56,7 +56,18 @@ class ResponsiveAppShell extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.white,
         title: Text(title),
+        flexibleSpace: const DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: <Color>[Colors.black, Colors.red],
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+            ),
+          ),
+        ),
         actions: <Widget>[
           if (appState.isCheckingConnectivity)
             const Padding(
@@ -70,14 +81,16 @@ class ResponsiveAppShell extends StatelessWidget {
               ),
             ),
           IconButton(
-            tooltip: themeProvider.isDarkMode ? 'Use light mode' : 'Use dark mode',
+            tooltip: themeProvider.isDarkMode
+                ? 'Hellen Modus verwenden'
+                : 'Dunklen Modus verwenden',
             onPressed: themeProvider.toggle,
             icon: Icon(
               themeProvider.isDarkMode ? Icons.light_mode : Icons.dark_mode,
             ),
           ),
           IconButton(
-            tooltip: 'Refresh backend status',
+            tooltip: 'Backend-Status aktualisieren',
             onPressed: appState.refreshConnectivity,
             icon: const Icon(Icons.cloud_sync_outlined),
           ),
@@ -169,7 +182,7 @@ class _DemoModeBanner extends StatelessWidget {
           const SizedBox(width: 12),
           Expanded(
             child: Text(
-              'Demo mode is active. Data is stored locally in your browser.',
+              'Demo-Modus ist aktiv. Daten werden lokal in Ihrem Browser gespeichert.',
               style: Theme.of(context).textTheme.bodyMedium,
             ),
           ),
@@ -192,14 +205,13 @@ class _NavItem {
 }
 
 const List<_NavItem> _items = <_NavItem>[
-  _NavItem(label: 'Dashboard', route: '/', icon: Icons.dashboard_outlined),
-  _NavItem(label: 'Vehicles', route: '/vehicles', icon: Icons.directions_car),
+  _NavItem(label: 'Übersicht', route: '/', icon: Icons.dashboard_outlined),
+  _NavItem(label: 'Fahrzeuge', route: '/vehicles', icon: Icons.directions_car),
   _NavItem(
-    label: 'Maintenance',
+    label: 'Wartung',
     route: '/maintenance',
     icon: Icons.build_circle_outlined,
   ),
-  _NavItem(label: 'Documents', route: '/documents', icon: Icons.folder_copy_outlined),
-  _NavItem(label: 'Reminders', route: '/reminders', icon: Icons.notifications_active_outlined),
+  _NavItem(label: 'Dokumente', route: '/documents', icon: Icons.folder_copy_outlined),
+  _NavItem(label: 'Erinnerungen', route: '/reminders', icon: Icons.notifications_active_outlined),
 ];
-
