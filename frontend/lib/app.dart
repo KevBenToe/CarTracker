@@ -60,7 +60,7 @@ class ResponsiveAppShell extends StatelessWidget {
         foregroundColor: Colors.white,
         title: Text(title),
         flexibleSpace: const DecoratedBox(
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: <Color>[
                 Color(0xFF8B0000),
@@ -75,7 +75,7 @@ class ResponsiveAppShell extends StatelessWidget {
             child: Align(
               alignment: Alignment.centerLeft,
               child: Padding(
-                padding: const EdgeInsets.only(left: 16),
+                padding: EdgeInsets.only(left: 16),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
