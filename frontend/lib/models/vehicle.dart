@@ -11,6 +11,7 @@ class Vehicle {
     this.notes,
     this.lastServiceDate,
     this.nextServiceDate,
+    this.imageUrl,
   });
 
   final String id;
@@ -24,6 +25,7 @@ class Vehicle {
   final String? notes;
   final DateTime? lastServiceDate;
   final DateTime? nextServiceDate;
+  final String? imageUrl;
 
   String get displayName {
     if (nickname != null && nickname!.trim().isNotEmpty) {
@@ -46,6 +48,8 @@ class Vehicle {
     DateTime? nextServiceDate,
     bool clearLastServiceDate = false,
     bool clearNextServiceDate = false,
+    String? imageUrl,
+    bool clearImageUrl = false,
   }) {
     return Vehicle(
       id: id ?? this.id,
@@ -61,6 +65,7 @@ class Vehicle {
           clearLastServiceDate ? null : lastServiceDate ?? this.lastServiceDate,
       nextServiceDate:
           clearNextServiceDate ? null : nextServiceDate ?? this.nextServiceDate,
+      imageUrl: clearImageUrl ? null : imageUrl ?? this.imageUrl,
     );
   }
 
@@ -83,6 +88,7 @@ class Vehicle {
       nextServiceDate: _parseDate(
         json['next_service_date'] ?? json['nextServiceDate'],
       ),
+      imageUrl: json['image']?.toString(),
     );
   }
 

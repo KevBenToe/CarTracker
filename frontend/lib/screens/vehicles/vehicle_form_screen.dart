@@ -1,5 +1,8 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
@@ -31,6 +34,10 @@ class _VehicleFormScreenState extends State<VehicleFormScreen> {
   bool _initialized = false;
   bool _isSaving = false;
 
+  Uint8List? _imageBytes;
+  String? _imageFileName;
+  String? _existingImageUrl;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -51,6 +58,7 @@ class _VehicleFormScreenState extends State<VehicleFormScreen> {
       _notesController.text = vehicle.notes ?? '';
       _lastServiceDate = vehicle.lastServiceDate;
       _nextServiceDate = vehicle.nextServiceDate;
+      _existingImageUrl = vehicle.imageUrl;
     }
     _initialized = true;
   }
@@ -66,6 +74,19 @@ class _VehicleFormScreenState extends State<VehicleFormScreen> {
     _mileageController.dispose();
     _notesController.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? file = await picker.pickImage(source: ImageSource.gallery);
+    if (file == null) {
+      return;
+    }
+    final Uint8List bytes = await file.readAsBytes();
+    setState(() {
+      _imageBytes = bytes;
+      _imageFileName = file.name;
+    });
   }
 
   @override
@@ -90,6 +111,12 @@ class _VehicleFormScreenState extends State<VehicleFormScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
+                    _ImagePickerSection(
+                      imageBytes: _imageBytes,
+                      existingImageUrl: _existingImageUrl,
+                      onPickImage: _pickImage,
+                    ),
+                    const SizedBox(height: 20),
                     Wrap(
                       spacing: 16,
                       runSpacing: 16,
@@ -274,6 +301,13 @@ class _VehicleFormScreenState extends State<VehicleFormScreen> {
 
     try {
       await provider.saveVehicle(vehicle);
+      if (_imageBytes != null && _imageFileName != null) {
+        await provider.uploadVehicleImage(
+          vehicle.id,
+          _imageBytes!,
+          _imageFileName!,
+        );
+      }
       if (mounted) {
         context.go('/vehicles/${vehicle.id}');
       }
@@ -292,7 +326,80 @@ class _VehicleFormScreenState extends State<VehicleFormScreen> {
         });
       }
     }
+  }
+}
 
+class _ImagePickerSection extends StatelessWidget {
+  const _ImagePickerSection({
+    required this.onPickImage,
+    this.imageBytes,
+    this.existingImageUrl,
+  });
+
+  final Uint8List? imageBytes;
+  final String? existingImageUrl;
+  final VoidCallback onPickImage;
+
+  @override
+  Widget build(BuildContext context) {
+    final bool hasNewImage = imageBytes != null;
+    final bool hasExisting = existingImageUrl != null && existingImageUrl!.isNotEmpty;
+
+    Widget previewWidget;
+    if (hasNewImage) {
+      previewWidget = Image.memory(
+        imageBytes!,
+        width: 200,
+        height: 150,
+        fit: BoxFit.cover,
+      );
+    } else if (hasExisting) {
+      previewWidget = Image.network(
+        existingImageUrl!,
+        width: 200,
+        height: 150,
+        fit: BoxFit.cover,
+        errorBuilder: (BuildContext context, Object error, StackTrace? stack) =>
+            const _ImagePlaceholder(),
+      );
+    } else {
+      previewWidget = const _ImagePlaceholder();
+    }
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: <Widget>[
+        ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: previewWidget,
+        ),
+        const SizedBox(width: 16),
+        OutlinedButton.icon(
+          onPressed: onPickImage,
+          icon: const Icon(Icons.photo_camera_outlined),
+          label: Text(
+            hasNewImage || hasExisting ? 'Bild ändern' : 'Bild auswählen',
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ImagePlaceholder extends StatelessWidget {
+  const _ImagePlaceholder();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 200,
+      height: 150,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: const Icon(Icons.directions_car_outlined, size: 48),
+    );
   }
 }
 

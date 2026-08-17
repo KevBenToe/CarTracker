@@ -8,6 +8,7 @@ abstract class VehicleRepository {
   Future<Vehicle> createVehicle(Vehicle vehicle);
   Future<Vehicle> updateVehicle(Vehicle vehicle);
   Future<void> deleteVehicle(String id);
+  Future<Vehicle> uploadImage(String vehicleId, List<int> imageBytes, String fileName);
 }
 
 class ApiVehicleRepository implements VehicleRepository {
@@ -47,6 +48,17 @@ class ApiVehicleRepository implements VehicleRepository {
   @override
   Future<void> deleteVehicle(String id) {
     return _apiService.delete('vehicles/$id/');
+  }
+
+  @override
+  Future<Vehicle> uploadImage(String vehicleId, List<int> imageBytes, String fileName) async {
+    final Map<String, dynamic> data = await _apiService.patchMultipart(
+      'vehicles/$vehicleId/',
+      <String, String>{},
+      imageBytes,
+      fileName,
+    );
+    return Vehicle.fromJson(data);
   }
 }
 
@@ -116,6 +128,13 @@ class DemoVehicleRepository implements VehicleRepository {
     await _ensureInitialized();
     _vehicles.removeWhere((Vehicle vehicle) => vehicle.id == id);
     await _persist();
+  }
+
+  @override
+  Future<Vehicle> uploadImage(String vehicleId, List<int> imageBytes, String fileName) async {
+    // In demo mode, image upload is not persisted; return vehicle unchanged.
+    await _ensureInitialized();
+    return _vehicles.firstWhere((Vehicle v) => v.id == vehicleId);
   }
 }
 

@@ -78,5 +78,21 @@ class VehicleProvider extends ChangeNotifier {
     _vehicles = _vehicles.where((Vehicle vehicle) => vehicle.id != id).toList();
     notifyListeners();
   }
+
+  Future<Vehicle> uploadVehicleImage(
+    String vehicleId,
+    List<int> imageBytes,
+    String fileName,
+  ) async {
+    final Vehicle updated =
+        await _repository.uploadImage(vehicleId, imageBytes, fileName);
+    final int index =
+        _vehicles.indexWhere((Vehicle v) => v.id == vehicleId);
+    if (index != -1) {
+      _vehicles[index] = updated;
+      notifyListeners();
+    }
+    return updated;
+  }
 }
 

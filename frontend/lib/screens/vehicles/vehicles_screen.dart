@@ -83,42 +83,64 @@ class _VehicleCard extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(20),
         onTap: () => context.go('/vehicles/${vehicle.id}'),
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  const CircleAvatar(
-                    radius: 24,
-                    child: Icon(Icons.directions_car_outlined),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      vehicle.displayName,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                  ),
-                ],
-              ),
-              const Spacer(),
-              _VehicleLine(label: 'Kennzeichen', value: vehicle.licensePlate),
-              _VehicleLine(label: 'VIN', value: vehicle.vin),
-              _VehicleLine(
-                label: 'Kilometerstand',
-                value: NumberFormat.decimalPattern().format(vehicle.mileage),
-              ),
-              if (vehicle.nextServiceDate != null)
-                _VehicleLine(
-                  label: 'Nächster Service',
-                  value: DateFormat.yMMMd().format(vehicle.nextServiceDate!),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            if (vehicle.imageUrl != null && vehicle.imageUrl!.isNotEmpty)
+              ClipRRect(
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                child: Image.network(
+                  vehicle.imageUrl!,
+                  height: 100,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  errorBuilder:
+                      (BuildContext context, Object error, StackTrace? stack) =>
+                          const SizedBox.shrink(),
                 ),
-            ],
-          ),
+              ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        if (vehicle.imageUrl == null || vehicle.imageUrl!.isEmpty)
+                          const CircleAvatar(
+                            radius: 24,
+                            child: Icon(Icons.directions_car_outlined),
+                          ),
+                        if (vehicle.imageUrl == null || vehicle.imageUrl!.isEmpty)
+                          const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            vehicle.displayName,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: Theme.of(context).textTheme.titleLarge,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const Spacer(),
+                    _VehicleLine(label: 'Kennzeichen', value: vehicle.licensePlate),
+                    _VehicleLine(label: 'VIN', value: vehicle.vin),
+                    _VehicleLine(
+                      label: 'Kilometerstand',
+                      value: NumberFormat.decimalPattern().format(vehicle.mileage),
+                    ),
+                    if (vehicle.nextServiceDate != null)
+                      _VehicleLine(
+                        label: 'Nächster Service',
+                        value: DateFormat.yMMMd().format(vehicle.nextServiceDate!),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
