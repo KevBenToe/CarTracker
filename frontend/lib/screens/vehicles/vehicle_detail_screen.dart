@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:vehicle_service_manager_frontend/core/status_labels.dart';
 import 'package:vehicle_service_manager_frontend/models/maintenance_record.dart';
 import 'package:vehicle_service_manager_frontend/models/vehicle.dart';
 import 'package:vehicle_service_manager_frontend/providers/maintenance_provider.dart';
@@ -31,7 +32,7 @@ class VehicleDetailScreen extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         }
         if (!snapshot.hasData || snapshot.data == null) {
-          return const Center(child: Text('Vehicle not found.'));
+          return const Center(child: Text('Fahrzeug nicht gefunden.'));
         }
         return _VehicleDetailBody(vehicle: snapshot.data!);
       },
@@ -76,12 +77,12 @@ class _VehicleDetailBody extends StatelessWidget {
                 OutlinedButton.icon(
                   onPressed: () => context.go('/vehicles/${vehicle.id}/edit'),
                   icon: const Icon(Icons.edit_outlined),
-                  label: const Text('Edit'),
+                  label: const Text('Bearbeiten'),
                 ),
                 FilledButton.tonalIcon(
                   onPressed: () => _deleteVehicle(context),
                   icon: const Icon(Icons.delete_outline),
-                  label: const Text('Delete'),
+                  label: const Text('Löschen'),
                 ),
               ],
             ),
@@ -95,25 +96,25 @@ class _VehicleDetailBody extends StatelessWidget {
               spacing: 20,
               runSpacing: 16,
               children: <Widget>[
-                _DetailItem(label: 'License Plate', value: vehicle.licensePlate),
+                _DetailItem(label: 'Kennzeichen', value: vehicle.licensePlate),
                 _DetailItem(label: 'VIN', value: vehicle.vin),
                 _DetailItem(
-                  label: 'Mileage',
+                  label: 'Kilometerstand',
                   value: NumberFormat.decimalPattern().format(vehicle.mileage),
                 ),
                 _DetailItem(
-                  label: 'Last Service',
+                  label: 'Letzter Service',
                   value: vehicle.lastServiceDate == null
                       ? '—'
                       : DateFormat.yMMMd().format(vehicle.lastServiceDate!),
                 ),
                 _DetailItem(
-                  label: 'Next Service',
+                  label: 'Nächster Service',
                   value: vehicle.nextServiceDate == null
                       ? '—'
                       : DateFormat.yMMMd().format(vehicle.nextServiceDate!),
                 ),
-                _DetailItem(label: 'Notes', value: vehicle.notes ?? '—'),
+                _DetailItem(label: 'Notizen', value: vehicle.notes ?? '—'),
               ],
             ),
           ),
@@ -129,14 +130,14 @@ class _VehicleDetailBody extends StatelessWidget {
                   children: <Widget>[
                     Expanded(
                       child: Text(
-                        'Related maintenance',
+                        'Zugehörige Wartungen',
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
                     ),
                     TextButton.icon(
                       onPressed: () => context.go('/maintenance/new'),
                       icon: const Icon(Icons.add),
-                      label: const Text('Add Record'),
+                      label: const Text('Eintrag hinzufügen'),
                     ),
                   ],
                 ),
@@ -144,7 +145,7 @@ class _VehicleDetailBody extends StatelessWidget {
                 if (relatedRecords.isEmpty)
                   const Padding(
                     padding: EdgeInsets.symmetric(vertical: 12),
-                    child: Text('No maintenance records yet.'),
+                    child: Text('Noch keine Wartungseinträge vorhanden.'),
                   )
                 else
                   ...relatedRecords.map((MaintenanceRecord record) {
@@ -152,7 +153,9 @@ class _VehicleDetailBody extends StatelessWidget {
                       contentPadding: EdgeInsets.zero,
                       leading: const CircleAvatar(child: Icon(Icons.build_outlined)),
                       title: Text(record.title),
-                      subtitle: Text('${record.serviceType} • ${record.status}'),
+                      subtitle: Text(
+                        '${record.serviceType} • ${maintenanceStatusLabel(record.status)}',
+                      ),
                       trailing: Text(DateFormat.yMMMd().format(record.date)),
                     );
                   }),
@@ -169,16 +172,16 @@ class _VehicleDetailBody extends StatelessWidget {
       context: context,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
-          title: const Text('Delete vehicle?'),
-          content: Text('Remove ${vehicle.displayName} from the garage?'),
+          title: const Text('Fahrzeug löschen?'),
+          content: Text('${vehicle.displayName} aus der Garage entfernen?'),
           actions: <Widget>[
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(false),
-              child: const Text('Cancel'),
+              child: const Text('Abbrechen'),
             ),
             FilledButton(
               onPressed: () => Navigator.of(dialogContext).pop(true),
-              child: const Text('Delete'),
+              child: const Text('Löschen'),
             ),
           ],
         );
@@ -218,4 +221,3 @@ class _DetailItem extends StatelessWidget {
     );
   }
 }
-

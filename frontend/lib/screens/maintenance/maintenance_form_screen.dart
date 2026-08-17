@@ -80,7 +80,7 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
       padding: const EdgeInsets.all(20),
       children: <Widget>[
         Text(
-          isEditing ? 'Edit Maintenance' : 'Log Maintenance',
+          isEditing ? 'Wartung bearbeiten' : 'Wartung erfassen',
           style: Theme.of(context).textTheme.headlineSmall,
         ),
         const SizedBox(height: 20),
@@ -111,11 +111,11 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
                       },
                       validator: (String? value) {
                         if (value == null || value.isEmpty) {
-                          return 'Vehicle is required';
+                          return 'Fahrzeug ist erforderlich';
                         }
                         return null;
                       },
-                      decoration: const InputDecoration(labelText: 'Vehicle'),
+                      decoration: const InputDecoration(labelText: 'Fahrzeug'),
                     ),
                     const SizedBox(height: 16),
                     Wrap(
@@ -124,26 +124,26 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
                       children: <Widget>[
                         _textField(
                           controller: _titleController,
-                          label: 'Title',
+                          label: 'Titel',
                           width: 320,
                           isRequired: true,
                         ),
                         _textField(
                           controller: _typeController,
-                          label: 'Service Type',
+                          label: 'Serviceart',
                           width: 220,
                           isRequired: true,
                         ),
                         _textField(
                           controller: _mileageController,
-                          label: 'Mileage',
+                          label: 'Kilometerstand',
                           width: 180,
                           keyboardType: TextInputType.number,
                           isRequired: true,
                         ),
                         _textField(
                           controller: _costController,
-                          label: 'Cost',
+                          label: 'Kosten',
                           width: 180,
                           keyboardType: const TextInputType.numberWithOptions(
                             decimal: true,
@@ -163,7 +163,7 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
                             onTap: _pickDate,
                             borderRadius: BorderRadius.circular(14),
                             child: InputDecorator(
-                              decoration: const InputDecoration(labelText: 'Date'),
+                              decoration: const InputDecoration(labelText: 'Datum'),
                               child: Text(DateFormat.yMMMd().format(_date)),
                             ),
                           ),
@@ -172,15 +172,15 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
                           width: 220,
                           child: DropdownButtonFormField<String>(
                             value: _status,
-                            items: const <String>[
-                              'Completed',
-                              'Scheduled',
-                              'Overdue',
+                            items: <MapEntry<String, String>>[
+                              MapEntry<String, String>('Completed', 'Abgeschlossen'),
+                              MapEntry<String, String>('Scheduled', 'Geplant'),
+                              MapEntry<String, String>('Overdue', 'Überfällig'),
                             ]
                                 .map(
-                                  (String value) => DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value),
+                                  (MapEntry<String, String> entry) => DropdownMenuItem<String>(
+                                    value: entry.key,
+                                    child: Text(entry.value),
                                   ),
                                 )
                                 .toList(),
@@ -201,7 +201,7 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
                       controller: _notesController,
                       minLines: 3,
                       maxLines: 5,
-                      decoration: const InputDecoration(labelText: 'Notes'),
+                      decoration: const InputDecoration(labelText: 'Notizen'),
                     ),
                     const SizedBox(height: 24),
                     Wrap(
@@ -216,11 +216,15 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
                                   child: CircularProgressIndicator(strokeWidth: 2),
                                 )
                               : const Icon(Icons.save_outlined),
-                          label: Text(isEditing ? 'Save Changes' : 'Create Record'),
+                          label: Text(
+                            isEditing
+                                ? 'Änderungen speichern'
+                                : 'Eintrag erstellen',
+                          ),
                         ),
                         OutlinedButton(
                           onPressed: () => context.pop(),
-                          child: const Text('Cancel'),
+                          child: const Text('Abbrechen'),
                         ),
                       ],
                     ),
@@ -248,7 +252,7 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
         keyboardType: keyboardType,
         validator: (String? value) {
           if (isRequired && (value == null || value.trim().isEmpty)) {
-            return '$label is required';
+            return '$label ist erforderlich';
           }
           return null;
         },
@@ -301,7 +305,11 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
     } catch (error) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Unable to save maintenance record: $error')),
+          SnackBar(
+            content: Text(
+              'Wartungseintrag konnte nicht gespeichert werden: $error',
+            ),
+          ),
         );
       }
     } finally {

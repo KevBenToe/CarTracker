@@ -51,7 +51,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
             padding: const EdgeInsets.all(20),
             children: <Widget>[
               Text(
-                'Reminders',
+                'Erinnerungen',
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
               const SizedBox(height: 16),
@@ -59,14 +59,14 @@ class _RemindersScreenState extends State<RemindersScreen> {
                 const Card(
                   child: Padding(
                     padding: EdgeInsets.all(20),
-                    child: Text('No reminders scheduled.'),
+                    child: Text('Keine Erinnerungen geplant.'),
                   ),
                 )
               else
                 ...reminders.map((Reminder reminder) {
                   final String vehicleName =
                       vehicleProvider.findById(reminder.vehicleId)?.displayName ??
-                          'Unknown vehicle';
+                          'Unbekanntes Fahrzeug';
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 16),
                     child: Card(
@@ -80,7 +80,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
                         subtitle: Padding(
                           padding: const EdgeInsets.only(top: 8),
                           child: Text(
-                            '$vehicleName\nDue ${DateFormat.yMMMd().format(reminder.dueDate)}${reminder.mileageThreshold != null ? ' • ${NumberFormat.decimalPattern().format(reminder.mileageThreshold)} mi' : ''}',
+                            '$vehicleName\nFällig ${DateFormat.yMMMd().format(reminder.dueDate)}${reminder.mileageThreshold != null ? ' • ${NumberFormat.decimalPattern().format(reminder.mileageThreshold)} km' : ''}',
                           ),
                         ),
                         secondary: const Icon(Icons.notifications_active_outlined),
@@ -105,4 +105,3 @@ class _RemindersScreenState extends State<RemindersScreen> {
     }
   }
 }
-

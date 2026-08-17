@@ -76,7 +76,7 @@ class _VehicleFormScreenState extends State<VehicleFormScreen> {
       padding: const EdgeInsets.all(20),
       children: <Widget>[
         Text(
-          isEditing ? 'Edit Vehicle' : 'Add Vehicle',
+          isEditing ? 'Fahrzeug bearbeiten' : 'Fahrzeug hinzufügen',
           style: Theme.of(context).textTheme.headlineSmall,
         ),
         const SizedBox(height: 20),
@@ -96,31 +96,31 @@ class _VehicleFormScreenState extends State<VehicleFormScreen> {
                       children: <Widget>[
                         _textField(
                           controller: _nicknameController,
-                          label: 'Nickname',
+                          label: 'Spitzname',
                           width: 320,
                         ),
                         _textField(
                           controller: _makeController,
-                          label: 'Make',
+                          label: 'Marke',
                           width: 220,
                           isRequired: true,
                         ),
                         _textField(
                           controller: _modelController,
-                          label: 'Model',
+                          label: 'Modell',
                           width: 220,
                           isRequired: true,
                         ),
                         _textField(
                           controller: _yearController,
-                          label: 'Year',
+                          label: 'Baujahr',
                           width: 160,
                           keyboardType: TextInputType.number,
                           isRequired: true,
                         ),
                         _textField(
                           controller: _plateController,
-                          label: 'License Plate',
+                          label: 'Kennzeichen',
                           width: 220,
                           isRequired: true,
                         ),
@@ -132,7 +132,7 @@ class _VehicleFormScreenState extends State<VehicleFormScreen> {
                         ),
                         _textField(
                           controller: _mileageController,
-                          label: 'Mileage',
+                          label: 'Kilometerstand',
                           width: 200,
                           keyboardType: TextInputType.number,
                           isRequired: true,
@@ -145,12 +145,12 @@ class _VehicleFormScreenState extends State<VehicleFormScreen> {
                       runSpacing: 16,
                       children: <Widget>[
                         _DatePickerField(
-                          label: 'Last Service',
+                          label: 'Letzter Service',
                           value: _lastServiceDate,
                           onTap: () => _selectDate(isLastService: true),
                         ),
                         _DatePickerField(
-                          label: 'Next Service',
+                          label: 'Nächster Service',
                           value: _nextServiceDate,
                           onTap: () => _selectDate(isLastService: false),
                         ),
@@ -161,7 +161,7 @@ class _VehicleFormScreenState extends State<VehicleFormScreen> {
                       controller: _notesController,
                       minLines: 3,
                       maxLines: 5,
-                      decoration: const InputDecoration(labelText: 'Notes'),
+                      decoration: const InputDecoration(labelText: 'Notizen'),
                     ),
                     const SizedBox(height: 24),
                     Wrap(
@@ -177,11 +177,15 @@ class _VehicleFormScreenState extends State<VehicleFormScreen> {
                                   child: CircularProgressIndicator(strokeWidth: 2),
                                 )
                               : const Icon(Icons.save_outlined),
-                          label: Text(isEditing ? 'Save Changes' : 'Create Vehicle'),
+                          label: Text(
+                            isEditing
+                                ? 'Änderungen speichern'
+                                : 'Fahrzeug erstellen',
+                          ),
                         ),
                         OutlinedButton(
                           onPressed: () => context.pop(),
-                          child: const Text('Cancel'),
+                          child: const Text('Abbrechen'),
                         ),
                       ],
                     ),
@@ -210,7 +214,7 @@ class _VehicleFormScreenState extends State<VehicleFormScreen> {
         validator: isRequired
             ? (String? value) {
                 if (value == null || value.trim().isEmpty) {
-                  return '$label is required';
+                  return '$label ist erforderlich';
                 }
                 return null;
               }
@@ -276,7 +280,9 @@ class _VehicleFormScreenState extends State<VehicleFormScreen> {
     } catch (error) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Unable to save vehicle: $error')),
+          SnackBar(
+            content: Text('Fahrzeug konnte nicht gespeichert werden: $error'),
+          ),
         );
       }
     } finally {
@@ -311,7 +317,7 @@ class _DatePickerField extends StatelessWidget {
         child: InputDecorator(
           decoration: InputDecoration(labelText: label),
           child: Text(
-            value == null ? 'Select date' : DateFormat.yMMMd().format(value!),
+            value == null ? 'Datum auswählen' : DateFormat.yMMMd().format(value!),
           ),
         ),
       ),

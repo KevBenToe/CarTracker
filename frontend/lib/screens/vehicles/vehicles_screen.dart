@@ -37,14 +37,14 @@ class VehiclesScreen extends StatelessWidget {
                 children: <Widget>[
                   Expanded(
                     child: Text(
-                      'Vehicles',
+                      'Fahrzeuge',
                       style: Theme.of(context).textTheme.headlineSmall,
                     ),
                   ),
                   FilledButton.icon(
                     onPressed: () => context.go('/vehicles/new'),
                     icon: const Icon(Icons.add),
-                    label: const Text('Add Vehicle'),
+                    label: const Text('Fahrzeug hinzufügen'),
                   ),
                 ],
               ),
@@ -106,15 +106,15 @@ class _VehicleCard extends StatelessWidget {
                 ],
               ),
               const Spacer(),
-              _VehicleLine(label: 'Plate', value: vehicle.licensePlate),
+              _VehicleLine(label: 'Kennzeichen', value: vehicle.licensePlate),
               _VehicleLine(label: 'VIN', value: vehicle.vin),
               _VehicleLine(
-                label: 'Mileage',
+                label: 'Kilometerstand',
                 value: NumberFormat.decimalPattern().format(vehicle.mileage),
               ),
               if (vehicle.nextServiceDate != null)
                 _VehicleLine(
-                  label: 'Next service',
+                  label: 'Nächster Service',
                   value: DateFormat.yMMMd().format(vehicle.nextServiceDate!),
                 ),
             ],
@@ -150,4 +150,3 @@ class _VehicleLine extends StatelessWidget {
     );
   }
 }
-

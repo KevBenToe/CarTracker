@@ -52,7 +52,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
             padding: const EdgeInsets.all(20),
             children: <Widget>[
               Text(
-                'Documents',
+                'Dokumente',
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
               const SizedBox(height: 16),
@@ -60,14 +60,14 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                 const Card(
                   child: Padding(
                     padding: EdgeInsets.all(20),
-                    child: Text('No documents available.'),
+                    child: Text('Keine Dokumente verfügbar.'),
                   ),
                 )
               else
                 ...documents.map((VehicleDocument document) {
                   final String vehicleName =
                       vehicleProvider.findById(document.vehicleId)?.displayName ??
-                          'Unknown vehicle';
+                          'Unbekanntes Fahrzeug';
                   final bool expiringSoon = document.expiryDate != null &&
                       document.expiryDate!.isBefore(
                         DateTime.now().add(const Duration(days: 45)),
@@ -88,7 +88,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                         subtitle: Padding(
                           padding: const EdgeInsets.only(top: 8),
                           child: Text(
-                            '$vehicleName • ${document.type}\nIssued ${DateFormat.yMMMd().format(document.issuedDate)}',
+                            '$vehicleName • ${document.type}\nAusgestellt ${DateFormat.yMMMd().format(document.issuedDate)}',
                           ),
                         ),
                         trailing: Column(
@@ -97,7 +97,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                           children: <Widget>[
                             if (document.expiryDate != null)
                               Text(
-                                'Expires ${DateFormat.yMMMd().format(document.expiryDate!)}',
+                                'Ablaufdatum: ${DateFormat.yMMMd().format(document.expiryDate!)}',
                               ),
                             if (document.number != null) Text(document.number!),
                           ],
@@ -113,4 +113,3 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
     );
   }
 }
-
