@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -54,8 +55,23 @@ void main() {
 
     await tester.pumpAndSettle();
 
-    expect(find.text('Dashboard'), findsNWidgets(2));
-    expect(find.text('Add vehicle'), findsOneWidget);
+    expect(find.text('Übersicht'), findsNWidgets(2));
+    expect(find.text('Fahrzeug hinzufügen'), findsOneWidget);
+
+    final Finder appBarGradientFinder = find.descendant(
+      of: find.byType(AppBar),
+      matching: find.byWidgetPredicate(
+        (Widget widget) =>
+            widget is DecoratedBox &&
+            widget.decoration is BoxDecoration &&
+            (widget.decoration as BoxDecoration).gradient is LinearGradient,
+      ),
+    );
+    final DecoratedBox flexibleSpace =
+        tester.widget<DecoratedBox>(appBarGradientFinder.first);
+    final BoxDecoration decoration = flexibleSpace.decoration as BoxDecoration;
+    final LinearGradient gradient = decoration.gradient! as LinearGradient;
+    expect(gradient.colors, <Color>[Colors.black, Colors.red]);
   });
 }
 
