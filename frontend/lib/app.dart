@@ -59,12 +59,40 @@ class ResponsiveAppShell extends StatelessWidget {
         backgroundColor: Colors.transparent,
         foregroundColor: Colors.white,
         title: Text(title),
-        flexibleSpace: const DecoratedBox(
-          decoration: BoxDecoration(
+        flexibleSpace: DecoratedBox(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: <Color>[Colors.black, Colors.red],
+              colors: <Color>[
+                Color(0xFF8B0000),
+                Color(0xFFB0B0B8),
+              ],
               begin: Alignment.centerLeft,
               end: Alignment.centerRight,
+            ),
+          ),
+          child: SafeArea(
+            bottom: false,
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 16),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: const <Widget>[
+                    Icon(Icons.directions_car, color: Colors.white, size: 22),
+                    SizedBox(width: 8),
+                    Text(
+                      'Autohaus Rabus',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
         ),
