@@ -119,6 +119,15 @@ class _FakeVehicleRepository implements VehicleRepository {
 
   @override
   Future<Vehicle> updateVehicle(Vehicle vehicle) async => vehicle;
+
+  @override
+  Future<Vehicle> uploadImage(
+    String vehicleId,
+    List<int> imageBytes,
+    String fileName,
+  ) async {
+    return _vehicles.firstWhere((Vehicle v) => v.id == vehicleId);
+  }
 }
 
 class _FakeMaintenanceRepository implements MaintenanceRepository {
