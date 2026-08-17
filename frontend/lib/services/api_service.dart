@@ -59,6 +59,43 @@ class ApiService {
     }
   }
 
+  /// Uploads an image for a vehicle using a multipart PATCH request.
+  /// [path] is the API path (e.g. 'vehicles/<id>/').
+  /// [imageBytes] is the raw image bytes.
+  /// [fileName] is the file name including extension.
+  /// Returns the updated object as a JSON map.
+  Future<Map<String, dynamic>> patchMultipart(
+    String path,
+    Map<String, String> fields,
+    List<int> imageBytes,
+    String fileName,
+  ) async {
+    final Uri uri = _buildUri(path);
+    final http.MultipartRequest request = http.MultipartRequest('PATCH', uri)
+      ..headers['Accept'] = 'application/json'
+      ..fields.addAll(fields)
+      ..files.add(
+        http.MultipartFile.fromBytes(
+          'image',
+          imageBytes,
+          filename: fileName,
+        ),
+      );
+    final http.StreamedResponse streamed =
+        await _client.send(request).timeout(const Duration(seconds: 30));
+    final String body = await streamed.stream.bytesToString();
+    if (streamed.statusCode < 200 || streamed.statusCode >= 300) {
+      throw ApiException(
+        'Request failed with status ${streamed.statusCode}: $body',
+      );
+    }
+    if (body.trim().isEmpty) {
+      return <String, dynamic>{};
+    }
+    final dynamic decoded = jsonDecode(body);
+    return _normalizeObject(decoded);
+  }
+
   Uri _buildUri(String path) {
     final String normalizedBase =
         baseUrl.endsWith('/') ? baseUrl.substring(0, baseUrl.length - 1) : baseUrl;

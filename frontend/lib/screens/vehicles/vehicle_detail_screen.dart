@@ -88,6 +88,19 @@ class _VehicleDetailBody extends StatelessWidget {
             ),
           ],
         ),
+        const SizedBox(height: 16),
+        if (vehicle.imageUrl != null && vehicle.imageUrl!.isNotEmpty)
+          ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: Image.network(
+              vehicle.imageUrl!,
+              height: 240,
+              width: double.infinity,
+              fit: BoxFit.cover,
+              errorBuilder: (BuildContext context, Object error, StackTrace? stack) =>
+                  const SizedBox.shrink(),
+            ),
+          ),
         const SizedBox(height: 20),
         Card(
           child: Padding(
