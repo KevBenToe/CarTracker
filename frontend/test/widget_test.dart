@@ -71,7 +71,10 @@ void main() {
         tester.widget<DecoratedBox>(appBarGradientFinder.first);
     final BoxDecoration decoration = flexibleSpace.decoration as BoxDecoration;
     final LinearGradient gradient = decoration.gradient! as LinearGradient;
-    expect(gradient.colors, <Color>[Colors.black, Colors.red]);
+    expect(
+      gradient.colors,
+      const <Color>[Color(0xFF8B0000), Color(0xFFB0B0B8)],
+    );
   });
 }
 
