@@ -64,3 +64,48 @@ class MaintenanceRecordAPITests(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["count"], 1)
         self.assertEqual(response.data["results"][0]["title"], "Tire Rotation")
+
+    def test_search_maintenance_by_title(self):
+        MaintenanceRecord.objects.create(
+            vehicle=self.vehicle, title="Oil Change", date="2026-08-01", status="completed"
+        )
+        MaintenanceRecord.objects.create(
+            vehicle=self.vehicle, title="Brake Service", date="2026-08-02", status="scheduled"
+        )
+
+        response = self.client.get(f"{self.list_url}?search=Oil", format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["count"], 1)
+        self.assertEqual(response.data["results"][0]["title"], "Oil Change")
+
+    def test_filter_maintenance_by_status(self):
+        MaintenanceRecord.objects.create(
+            vehicle=self.vehicle, title="Oil Change", date="2026-08-01", status="completed"
+        )
+        MaintenanceRecord.objects.create(
+            vehicle=self.vehicle, title="Brake Service", date="2026-08-02", status="scheduled"
+        )
+
+        response = self.client.get(f"{self.list_url}?status=scheduled", format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["count"], 1)
+        self.assertEqual(response.data["results"][0]["title"], "Brake Service")
+
+    def test_order_maintenance_by_next_due_date(self):
+        MaintenanceRecord.objects.create(
+            vehicle=self.vehicle, title="First", date="2026-08-01",
+            status="completed", next_due_date="2027-06-01"
+        )
+        MaintenanceRecord.objects.create(
+            vehicle=self.vehicle, title="Second", date="2026-08-02",
+            status="scheduled", next_due_date="2027-01-01"
+        )
+
+        response = self.client.get(f"{self.list_url}?ordering=next_due_date", format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        titles = [r["title"] for r in response.data["results"]]
+        self.assertEqual(titles[0], "Second")
+        self.assertEqual(titles[1], "First")

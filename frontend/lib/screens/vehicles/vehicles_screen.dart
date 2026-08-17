@@ -6,8 +6,53 @@ import 'package:vehicle_service_manager_frontend/core/constants.dart';
 import 'package:vehicle_service_manager_frontend/models/vehicle.dart';
 import 'package:vehicle_service_manager_frontend/providers/vehicle_provider.dart';
 
-class VehiclesScreen extends StatelessWidget {
+class VehiclesScreen extends StatefulWidget {
   const VehiclesScreen({super.key});
+
+  @override
+  State<VehiclesScreen> createState() => _VehiclesScreenState();
+}
+
+class _VehiclesScreenState extends State<VehiclesScreen> {
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+  _VehicleSortOption _sortOption = _VehicleSortOption.none;
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  List<Vehicle> _filtered(List<Vehicle> vehicles) {
+    List<Vehicle> result = vehicles;
+    if (_searchQuery.isNotEmpty) {
+      final String q = _searchQuery.toLowerCase();
+      result = result.where((Vehicle v) {
+        return v.licensePlate.toLowerCase().contains(q) ||
+            v.vin.toLowerCase().contains(q) ||
+            v.make.toLowerCase().contains(q) ||
+            v.model.toLowerCase().contains(q) ||
+            (v.nickname?.toLowerCase().contains(q) ?? false);
+      }).toList();
+    }
+    switch (_sortOption) {
+      case _VehicleSortOption.licensePlate:
+        result = List<Vehicle>.from(result)
+          ..sort((Vehicle a, Vehicle b) => a.licensePlate.compareTo(b.licensePlate));
+      case _VehicleSortOption.nextServiceDate:
+        result = List<Vehicle>.from(result)
+          ..sort((Vehicle a, Vehicle b) {
+            if (a.nextServiceDate == null && b.nextServiceDate == null) return 0;
+            if (a.nextServiceDate == null) return 1;
+            if (b.nextServiceDate == null) return -1;
+            return a.nextServiceDate!.compareTo(b.nextServiceDate!);
+          });
+      case _VehicleSortOption.none:
+        break;
+    }
+    return result;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +65,8 @@ class VehiclesScreen extends StatelessWidget {
     if (provider.errorMessage != null && provider.vehicles.isEmpty) {
       return Center(child: Text(provider.errorMessage!));
     }
+
+    final List<Vehicle> displayed = _filtered(provider.vehicles);
 
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
@@ -48,22 +95,81 @@ class VehiclesScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
-              GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: provider.vehicles.length,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: columns,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                  childAspectRatio: 1.38,
-                ),
-                itemBuilder: (BuildContext context, int index) {
-                  final Vehicle vehicle = provider.vehicles[index];
-                  return _VehicleCard(vehicle: vehicle);
-                },
+              const SizedBox(height: 12),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: TextField(
+                      controller: _searchController,
+                      decoration: InputDecoration(
+                        hintText: 'Suchen (Kennzeichen, VIN, Marke …)',
+                        prefixIcon: const Icon(Icons.search),
+                        suffixIcon: _searchQuery.isNotEmpty
+                            ? IconButton(
+                                icon: const Icon(Icons.clear),
+                                tooltip: 'Suche zurücksetzen',
+                                onPressed: () {
+                                  _searchController.clear();
+                                  setState(() => _searchQuery = '');
+                                },
+                              )
+                            : null,
+                        border: const OutlineInputBorder(),
+                        isDense: true,
+                      ),
+                      onChanged: (String value) =>
+                          setState(() => _searchQuery = value),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  PopupMenuButton<_VehicleSortOption>(
+                    tooltip: 'Sortieren',
+                    icon: const Icon(Icons.sort),
+                    initialValue: _sortOption,
+                    onSelected: (_VehicleSortOption option) =>
+                        setState(() => _sortOption = option),
+                    itemBuilder: (BuildContext context) =>
+                        <PopupMenuEntry<_VehicleSortOption>>[
+                      const PopupMenuItem<_VehicleSortOption>(
+                        value: _VehicleSortOption.none,
+                        child: Text('Standard'),
+                      ),
+                      const PopupMenuItem<_VehicleSortOption>(
+                        value: _VehicleSortOption.licensePlate,
+                        child: Text('Kennzeichen'),
+                      ),
+                      const PopupMenuItem<_VehicleSortOption>(
+                        value: _VehicleSortOption.nextServiceDate,
+                        child: Text('Nächster Service'),
+                      ),
+                    ],
+                  ),
+                ],
               ),
+              const SizedBox(height: 16),
+              if (displayed.isEmpty)
+                const Card(
+                  child: Padding(
+                    padding: EdgeInsets.all(20),
+                    child: Text('Keine Fahrzeuge gefunden.'),
+                  ),
+                )
+              else
+                GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: displayed.length,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: columns,
+                    crossAxisSpacing: 16,
+                    mainAxisSpacing: 16,
+                    childAspectRatio: 1.38,
+                  ),
+                  itemBuilder: (BuildContext context, int index) {
+                    final Vehicle vehicle = displayed[index];
+                    return _VehicleCard(vehicle: vehicle);
+                  },
+                ),
             ],
           ),
         );
@@ -71,6 +177,8 @@ class VehiclesScreen extends StatelessWidget {
     );
   }
 }
+
+enum _VehicleSortOption { none, licensePlate, nextServiceDate }
 
 class _VehicleCard extends StatelessWidget {
   const _VehicleCard({required this.vehicle});

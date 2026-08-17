@@ -68,3 +68,43 @@ class VehicleAPITests(TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(Vehicle.objects.filter(id=vehicle.id).exists())
+
+    def test_search_vehicles_by_license_plate(self):
+        Vehicle.objects.create(**{**self.vehicle_payload, "license_plate": "XYZ999"})
+        Vehicle.objects.create(**{**self.vehicle_payload, "license_plate": "ABC123", "vin": "1HGCM82633A000001"})
+
+        response = self.client.get(f"{self.list_url}?search=XYZ999", format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["count"], 1)
+        self.assertEqual(response.data["results"][0]["license_plate"], "XYZ999")
+
+    def test_search_vehicles_by_vin(self):
+        Vehicle.objects.create(**{**self.vehicle_payload, "vin": "UNIQUEVIN00000001"})
+        Vehicle.objects.create(**{**self.vehicle_payload, "vin": "OTHERVIN00000001", "license_plate": "DEF456"})
+
+        response = self.client.get(f"{self.list_url}?search=UNIQUEVIN", format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["count"], 1)
+        self.assertEqual(response.data["results"][0]["vin"], "UNIQUEVIN00000001")
+
+    def test_search_vehicles_by_make(self):
+        Vehicle.objects.create(**self.vehicle_payload)
+        Vehicle.objects.create(**{**self.vehicle_payload, "make": "Honda", "license_plate": "DEF456", "vin": "1HGCM82633A000002"})
+
+        response = self.client.get(f"{self.list_url}?search=Honda", format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["count"], 1)
+        self.assertEqual(response.data["results"][0]["make"], "Honda")
+
+    def test_order_vehicles_by_license_plate(self):
+        Vehicle.objects.create(**{**self.vehicle_payload, "license_plate": "ZZZ000", "vin": "1HGCM82633A000003"})
+        Vehicle.objects.create(**{**self.vehicle_payload, "license_plate": "AAA111", "vin": "1HGCM82633A000004"})
+
+        response = self.client.get(f"{self.list_url}?ordering=license_plate", format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        plates = [v["license_plate"] for v in response.data["results"]]
+        self.assertEqual(plates, sorted(plates))
