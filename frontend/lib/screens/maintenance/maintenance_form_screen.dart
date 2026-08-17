@@ -173,9 +173,9 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
                           child: DropdownButtonFormField<String>(
                             value: _status,
                             items: <MapEntry<String, String>>[
-                              MapEntry<String, String>('Completed', 'Abgeschlossen'),
-                              MapEntry<String, String>('Scheduled', 'Geplant'),
-                              MapEntry<String, String>('Overdue', 'Überfällig'),
+                              const MapEntry<String, String>('Completed', 'Abgeschlossen'),
+                              const MapEntry<String, String>('Scheduled', 'Geplant'),
+                              const MapEntry<String, String>('Overdue', 'Überfällig'),
                             ]
                                 .map(
                                   (MapEntry<String, String> entry) => DropdownMenuItem<String>(
