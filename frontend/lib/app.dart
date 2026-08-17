@@ -59,7 +59,7 @@ class ResponsiveAppShell extends StatelessWidget {
         backgroundColor: Colors.transparent,
         foregroundColor: Colors.white,
         title: Text(title),
-        flexibleSpace: DecoratedBox(
+        flexibleSpace: const DecoratedBox(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: <Color>[
@@ -78,7 +78,7 @@ class ResponsiveAppShell extends StatelessWidget {
                 padding: const EdgeInsets.only(left: 16),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
-                  children: const <Widget>[
+                  children: <Widget>[
                     Icon(Icons.directions_car, color: Colors.white, size: 22),
                     SizedBox(width: 8),
                     Text(
